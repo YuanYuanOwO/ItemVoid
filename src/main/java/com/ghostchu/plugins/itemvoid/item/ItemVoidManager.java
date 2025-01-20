@@ -77,7 +77,7 @@ public class ItemVoidManager implements AutoCloseable {
             return false;
         }
         ItemMeta meta = stack.getItemMeta();
-        return meta.hasCustomModelData() || meta.hasDisplayName() || meta.hasLore() || meta.hasEnchants() || meta.hasAttributeModifiers();
+        return meta.hasCustomModelData() || meta.hasDisplayName() || meta.hasLore() || meta.hasAttributeModifiers();
     }
 
     private Collection<ItemStack> parsePossibleExtraContent(ItemMeta meta, int depth) {

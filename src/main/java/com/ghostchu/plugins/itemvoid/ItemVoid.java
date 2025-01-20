@@ -114,23 +114,27 @@ public final class ItemVoid extends JavaPlugin {
 
     public void collectFromEntity(Entity entity) {
         if (entity instanceof Player player) {
-            itemVoidManager.discover(player.getInventory());
-            itemVoidManager.discover(player.getEnderChest());
+            itemVoidManager.discover(player.getInventory().getContents());
+            itemVoidManager.discover(player.getEnderChest().getContents());
+            itemVoidManager.discover(player.getInventory().getArmorContents());
+        } else if (entity instanceof LivingEntity livingEntity) {
+            EntityEquipment equipment = livingEntity.getEquipment();
+            if (equipment != null) {
+                itemVoidManager.discover(equipment.getArmorContents());
+                for (EquipmentSlot value : EquipmentSlot.values()) {
+                    try {
+                        itemVoidManager.discover(equipment.getItem(value));
+                    } catch (IllegalArgumentException e) {
+                        getLogger().warning("Invalid equipment slot: " + value + " for entity: " + entity.getName());
+                    }
+                }
+            }
         }
         if (entity instanceof ItemFrame itemFrame) {
             itemVoidManager.discover(itemFrame.getItem());
         }
         if (entity instanceof InventoryHolder inventoryHolder) {
             itemVoidManager.discover(inventoryHolder.getInventory().getContents());
-        }
-        if (entity instanceof LivingEntity livingEntity) {
-            EntityEquipment equipment = livingEntity.getEquipment();
-            if (equipment != null) {
-                itemVoidManager.discover(equipment.getArmorContents());
-                for (EquipmentSlot value : EquipmentSlot.values()) {
-                    itemVoidManager.discover(equipment.getItem(value));
-                }
-            }
         }
     }
 
@@ -215,7 +219,7 @@ public final class ItemVoid extends JavaPlugin {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length < 2) {
-            return List.of("queryName", "queryLore", "status", "forcesaveall");
+            return List.of("queryName", "queryLore", "status", "forcesaveall", "queryByMaterial");
         }
         if (args.length == 3) {
             return List.of("keyword");
